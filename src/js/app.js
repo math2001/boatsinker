@@ -17,7 +17,7 @@ ws.onmessage = msg => {
 
 em.on('got.name', name => {
   em.emit('connection.send', {
-    kind: 'game request',
+    kind: 'request',
     name: name
   })
 })

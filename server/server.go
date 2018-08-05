@@ -88,7 +88,7 @@ func main() {
 					return
 				}
 				if err != nil {
-					em.Emit("connection.error", utils.Error{err, conn})
+					em.Emit("connection.error", utils.Error{Err: err, Data: conn})
 					return
 				}
 				if header.OpCode == ws.OpClose {
