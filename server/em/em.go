@@ -25,6 +25,8 @@ func (e *EventManager) On(name string, cb callback) {
 }
 
 func (e *EventManager) Emit(name string, args interface{}) []error {
+	// handlers should return there is a user error. If it's a dev error,
+	// it should panic *itself*.
 	log.Printf("%#v %v", name, args)
 	callbacks, ok := e.events[name]
 	if !ok {
@@ -36,6 +38,7 @@ func (e *EventManager) Emit(name string, args interface{}) []error {
 		if err != nil {
 			errs = append(errs, err)
 		}
+		log.Print("Error:", err)
 	}
 	return errs
 }

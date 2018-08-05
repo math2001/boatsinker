@@ -4,21 +4,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net"
 	"net/http"
 
 	"github.com/gobwas/ws"
 	"github.com/gobwas/ws/wsutil"
 	"github.com/math2001/boatsinker/server/app"
 	"github.com/math2001/boatsinker/server/em"
+	"github.com/math2001/boatsinker/server/utils"
 )
 
 const PORT = 9999
 
-type Message struct {
-	Data map[string]interface{}
-	From *net.Conn
-}
+// the server manages the "raw" connection. It doesn't know anything about the game
+// It could be used in a whole different application.
+// It triggers and listen for various events:
+// - connection.new -> got new connection
+// - connection.msg -> got new message
+// - connection.error -> got error while reading
+// To send a message, just emit the event 'connection.send' with a Message
+// set .Data to be the data, and .From to be the connection you want to send to.
+// you don't need to mind about .Count
 
 func main() {
 	addr := fmt.Sprintf("0.0.0.0:%d", PORT)
@@ -36,10 +41,28 @@ func main() {
 		go func() {
 			defer conn.Close()
 			var (
+				writer  = wsutil.NewWriter(conn, ws.StateServerSide, ws.OpText)
 				reader  = wsutil.NewReader(conn, ws.StateServerSide)
 				decoder = json.NewDecoder(reader)
+				encoder = json.NewEncoder(writer)
 			)
+			em.On("connetion.send", func(e interface{}) error {
+				msg, ok := e.(utils.Message)
+				if !ok {
+					log.Print("Invalid data to send. Should be a Message")
+					panic(nil)
+				}
+				if msg.From == &conn {
+					// this is our connection, *we* have the writer
+					if err := encoder.Encode(msg.Data); err != nil {
+						return fmt.Errorf("Couldn't encode message and write to connection with %v",
+							msg.Data)
+					}
+				}
+				return nil
+			})
 			// read from the connection forever and close when there is an error
+			messagecount := 1
 			for {
 				header, err := reader.NextFrame()
 				if err != nil {
@@ -51,9 +74,10 @@ func main() {
 					return
 				}
 
-				var msg Message
+				var msg utils.Message
 				msg.From = &conn
 				msg.Data = make(map[string]interface{})
+				msg.Count = messagecount
 
 				if err := decoder.Decode(&msg.Data); err != nil {
 					log.Printf("Error occured while parsing WebSocket: %s", err)
@@ -62,6 +86,7 @@ func main() {
 
 				em.Emit("connection.msg", msg)
 
+				messagecount += 1
 			}
 		}()
 	})
