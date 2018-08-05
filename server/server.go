@@ -23,7 +23,9 @@ const PORT = 9999
 // - connection.error -> got error while reading
 // To send a message, just emit the event 'connection.send' with a Message
 // set .Data to be the data, and .From to be the connection you want to send to.
-// you don't need to mind about .Count
+// .Count should be 0 (this is the default). As soon as the message is send, it is set 1.
+// In order to make sure that the connection has been found and your message sent, you might want
+// to make sure that the it actually is set to 1
 
 func main() {
 	addr := fmt.Sprintf("0.0.0.0:%d", PORT)
@@ -50,6 +52,10 @@ func main() {
 				msg, ok := e.(utils.Message)
 				if !ok {
 					log.Print("Invalid data to send. Should be a Message")
+					panic(nil)
+				}
+				if msg.Count != 0 {
+					log.Printf("Message .Count should be 0, got %d", msg.Count)
 					panic(nil)
 				}
 				if msg.From == &conn {
