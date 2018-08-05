@@ -1,3 +1,8 @@
+.PHONY: dev runserver buildclient watchsrc
+
+dev:
+	/usr/bin/env bash ./dev.sh
+
 runserver: boatsinker
 	clear
 	./boatsinker
