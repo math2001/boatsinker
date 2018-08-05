@@ -2,11 +2,11 @@
 
 runserver:
 	make buildserver
-	./boatkiller
+	./boatsinker
 
 buildserver:
-	cd server; go build -o boatkiller
-	mv server/boatkiller .
+	cd server; go build -o boatsinker
+	mv server/boatsinker .
 
 buildclient:
 	parcel build src/index.html

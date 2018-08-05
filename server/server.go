@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 
 	"github.com/gobwas/ws"
@@ -17,15 +18,7 @@ const PORT = 9999
 
 // the server manages the "raw" connection. It doesn't know anything about the game
 // It could be used in a whole different application.
-// It triggers and listen for various events:
-// - connection.new -> got new connection
-// - connection.msg -> got new message
-// - connection.error -> got error while reading
-// To send a message, just emit the event 'connection.send' with a Message
-// set .Data to be the data, and .From to be the connection you want to send to.
-// .Count should be 0 (this is the default). As soon as the message is send, it is set 1.
-// In order to make sure that the connection has been found and your message sent, you might want
-// to make sure that the it actually is set to 1
+// Every connection.* events is managed my him (either triggered or listened)
 
 func main() {
 	addr := fmt.Sprintf("0.0.0.0:%d", PORT)
@@ -48,7 +41,7 @@ func main() {
 				decoder = json.NewDecoder(reader)
 				encoder = json.NewEncoder(writer)
 			)
-			em.On("connetion.send", func(e interface{}) error {
+			em.On("connection.send", func(e interface{}) error {
 				msg, ok := e.(utils.Message)
 				if !ok {
 					log.Print("Invalid data to send. Should be a Message")
@@ -64,6 +57,23 @@ func main() {
 						return fmt.Errorf("Couldn't encode message and write to connection with %v",
 							msg.Data)
 					}
+				}
+				return nil
+			})
+			em.On("connection.close", func(e interface{}) error {
+				conn, ok := e.(net.Conn)
+				if !ok {
+					panic("Should have net.Conn")
+				}
+				return conn.Close()
+			})
+			em.On("connection.broadcast", func(e interface{}) error {
+				data, ok := e.(map[string]interface{})
+				if !ok {
+					panic("Should have a map[string]interface{}")
+				}
+				if err := encoder.Encode(data); err != nil {
+					log.Print(err)
 				}
 				return nil
 			})
