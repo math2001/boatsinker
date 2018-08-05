@@ -27,7 +27,7 @@ func (e *EventManager) On(name string, cb callback) {
 func (e *EventManager) Emit(name string, args interface{}) []error {
 	// handlers should return there is a user error. If it's a dev error,
 	// it should panic *itself*.
-	log.Printf("%#v %v", name, args)
+	log.Printf("%#v %#v\n", name, args)
 	callbacks, ok := e.events[name]
 	if !ok {
 		return []error{fmt.Errorf("No handlers for the event %#v", name)}
@@ -37,8 +37,9 @@ func (e *EventManager) Emit(name string, args interface{}) []error {
 		err := cb(args)
 		if err != nil {
 			errs = append(errs, err)
+			fmt.Printf("Got error: %#v", err)
+			log.Print("Error:", err)
 		}
-		log.Print("Error:", err)
 	}
 	return errs
 }

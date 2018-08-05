@@ -1,10 +1,9 @@
-.SILENT:
-
 runserver: boatsinker
+	clear
 	./boatsinker
 
-boatsinker:
-	cd server; go build -o boatsinker
+boatsinker: server/**/*.go server/*.go
+	cd server; go build -i -o boatsinker
 	mv server/boatsinker .
 
 buildclient:

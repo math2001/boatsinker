@@ -20,7 +20,7 @@ func Start() {
 	em.On("connection.msg", func(e interface{}) error {
 		msg, ok := e.(utils.Message)
 		if !ok {
-			panic(fmt.Sprintf("Should have utils.Message, got %#v", e))
+			panic(fmt.Sprintf("Should have utils.Message, got %T", e))
 		}
 		if msg.Count == 1 {
 			// this the player's first message
@@ -36,7 +36,7 @@ func Start() {
 			mapstructure.Decode(msg.Data, &data)
 			players = append(players, Player{Name: data.name})
 			if data.kind != "request" {
-				log.Printf("Got invalid first message. Should have 'request', got %s", data.kind)
+				log.Printf("Got invalid first message. Should have 'request', got '%s'", data.kind)
 				em.Emit("connection.close", msg.From)
 			}
 			if len(players) == 2 {

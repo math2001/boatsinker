@@ -40,6 +40,7 @@ func main() {
 				reader  = wsutil.NewReader(conn, ws.StateServerSide)
 				decoder = json.NewDecoder(reader)
 				encoder = json.NewEncoder(writer)
+				closed  = false
 			)
 			em.On("connection.send", func(e interface{}) error {
 				msg, ok := e.(utils.Message)
@@ -61,11 +62,12 @@ func main() {
 				return nil
 			})
 			em.On("connection.close", func(e interface{}) error {
-				conn, ok := e.(net.Conn)
+				conn, ok := e.(*net.Conn)
 				if !ok {
-					panic("Should have net.Conn")
+					panic(fmt.Sprintf("Should have net.Conn, got %T", e))
 				}
-				return conn.Close()
+				closed = true
+				return (*conn).Close()
 			})
 			em.On("connection.broadcast", func(e interface{}) error {
 				data, ok := e.(map[string]interface{})
@@ -81,8 +83,12 @@ func main() {
 			messagecount := 1
 			for {
 				header, err := reader.NextFrame()
+				if closed {
+					// we have manually closed the connection, just ignore the rest
+					return
+				}
 				if err != nil {
-					em.Emit("connection.error", conn)
+					em.Emit("connection.error", utils.Error{err, conn})
 					return
 				}
 				if header.OpCode == ws.OpClose {
