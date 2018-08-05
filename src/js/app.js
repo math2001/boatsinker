@@ -1,7 +1,23 @@
-import Board from './board.js'
-// import('./board.js').then(board => {
-//   console.log(board)
-// })
+import em from './em.js'
+import GetName from './getname.js'
+import Game from './game.js'
 
-console.log(new Board())
-console.log(new Board())
+GetName.init()
+Game.init()
+
+const ws = new WebSocket(`ws://${location.host}/ws`)
+
+em.on('connection.send', msg => {
+  ws.send(JSON.stringify(msg))
+})
+
+ws.onmessage = msg => {
+  em.emit('connection.msg', JSON.parse(msg.data))
+}
+
+em.on('got.name', name => {
+  em.emit('connection.send', {
+    kind: 'game request',
+    name: name
+  })
+})

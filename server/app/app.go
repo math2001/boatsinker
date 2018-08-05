@@ -12,6 +12,7 @@ import (
 var players []Player
 
 type firstmessage struct {
+	kind string
 	name string
 }
 
@@ -34,6 +35,10 @@ func Start() {
 			var data firstmessage
 			mapstructure.Decode(msg.Data, &data)
 			players = append(players, Player{Name: data.name})
+			if data.kind != "request" {
+				log.Printf("Got invalid first message. Should have 'request', got %s", data.kind)
+				em.Emit("connection.close", msg.From)
+			}
 			if len(players) == 2 {
 				em.Emit("connection.broadcast", utils.MakeMap("kind", "state change",
 					"state", "setup"))
