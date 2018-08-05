@@ -1,0 +1,19 @@
+.board {
+  --cell-size: 20px;
+  --cells: 10;
+  display: grid;
+  width: calc(var(--cell-size) * var(--cells));
+  height: calc(var(--cell-size) * var(--cells));
+  outline: 1px solid;
+  grid-template-columns: repeat(var(--cells), 1fr);
+}
+
+.board .cell {
+  border-left: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+}
+
+.board .cell:hover {
+  background-color: #eee;
+}
+

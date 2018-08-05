@@ -1,10 +1,9 @@
 .SILENT:
 
-runserver:
-	make buildserver
+runserver: boatsinker
 	./boatsinker
 
-buildserver:
+boatsinker:
 	cd server; go build -o boatsinker
 	mv server/boatsinker .
 
@@ -12,5 +11,5 @@ buildclient:
 	parcel build src/index.html
 
 watchsrc:
-	parcel watch src/index.html
+	parcel watch src/index.html --no-hmr
 
