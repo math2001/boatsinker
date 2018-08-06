@@ -16,6 +16,16 @@ type EventManager struct {
 	events map[string][]callback
 }
 
+func logevent(name string, args interface{}) {
+	fmt.Printf("%s: ", name)
+	if _, ok := args.(fmt.Stringer); ok {
+		fmt.Printf("%s", args)
+	} else {
+		fmt.Printf("%#v", args)
+	}
+	fmt.Printf("\n")
+}
+
 func (e *EventManager) On(name string, cb callback) {
 	_, ok := e.events[name]
 	if !ok {
@@ -27,7 +37,7 @@ func (e *EventManager) On(name string, cb callback) {
 func (e *EventManager) Emit(name string, args interface{}) []error {
 	// handlers should return there is a user error. If it's a dev error,
 	// it should panic *itself*.
-	log.Printf("%#v %#v\n", name, args)
+	logevent(name, args)
 	callbacks, ok := e.events[name]
 	if !ok {
 		return []error{fmt.Errorf("No handlers for the event %#v", name)}
