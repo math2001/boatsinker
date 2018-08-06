@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"log"
+	"net"
 
 	"github.com/math2001/boatsinker/server/em"
 	"github.com/math2001/boatsinker/server/utils"
@@ -17,6 +18,14 @@ type firstmessage struct {
 }
 
 func Start() {
+	em.On("connection.closed", func(e interface{}) {
+		conn, ok := e.(net.Conn)
+		if !ok {
+			panic("Should have net.Conn")
+		}
+		// when a connection is closed, we close the game, and shutdown
+		log.Fatal("A player left. Shutdown")
+	})
 	em.On("connection.msg", func(e interface{}) error {
 		msg, ok := e.(utils.Message)
 		if !ok {
@@ -40,6 +49,7 @@ func Start() {
 				em.Emit("connection.close", msg.From)
 			}
 			if len(players) == 2 {
+				fmt.Println("DEBUG! broadcast")
 				em.Emit("connection.broadcast", utils.MakeMap("kind", "state change",
 					"state", "setup"))
 			}
