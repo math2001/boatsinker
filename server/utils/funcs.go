@@ -8,7 +8,7 @@ import (
 // usage: MakeMap("first", someobject, "second", another, )
 // returns map[string]interface{}{first: someobject, second, another}
 func MakeMap(args ...interface{}) map[string]interface{} {
-	var m map[string]interface{}
+	var m = make(map[string]interface{})
 	for i, arg := range args {
 		if i%2 == 1 {
 			continue
