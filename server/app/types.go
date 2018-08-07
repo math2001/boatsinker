@@ -7,7 +7,7 @@ type Point struct {
 type Boat struct {
 	Size     int
 	Pos      Point
-	Rotation int // 0, 1, 2 or 3
+	Rotation int // 0, 1, 2 or 3, in clockwise direction
 }
 
 type Board struct {

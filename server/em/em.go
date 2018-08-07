@@ -3,6 +3,7 @@ package em
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/math2001/boatsinker/server/utils"
 )
@@ -19,13 +20,14 @@ type EventManager struct {
 }
 
 func logevent(name string, args interface{}) {
-	fmt.Printf("%s: ", name)
+	var b strings.Builder
+	fmt.Fprintf(&b, "%s: ", name)
 	if _, ok := args.(fmt.Stringer); ok {
-		fmt.Printf("%s", args)
+		fmt.Fprintf(&b, "%s", args)
 	} else {
-		fmt.Printf("%#v", args)
+		fmt.Fprintf(&b, "%#v", args)
 	}
-	fmt.Printf("\n")
+	log.Print(b.String())
 }
 
 func (e *EventManager) On(name string, cb callback) {

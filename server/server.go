@@ -83,8 +83,10 @@ func main() {
 		}
 		var errs []error
 		for _, conn := range conns {
-			errs = append(errs, em.Emit("connection.send",
-				utils.Message{From: conn.raw, Data: data})...)
+			if err := em.Emit("connection.send",
+				utils.Message{From: conn.raw, Data: data}); err != nil {
+				errs = append(errs, err)
+			}
 		}
 		return utils.ErrorFrom(errs)
 	})
@@ -135,7 +137,9 @@ func main() {
 					return
 				}
 
-				em.Emit("connection.msg", msg)
+				if err := em.Emit("connection.msg", msg); err != nil {
+					log.Printf("Error on 'connection.msg':\n%s", err)
+				}
 
 				messagecount += 1
 			}
