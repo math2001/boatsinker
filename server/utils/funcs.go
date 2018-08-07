@@ -1,8 +1,11 @@
 package utils
 
 import (
+	"errors"
+	"fmt"
 	"log"
 	"net"
+	"strings"
 )
 
 // usage: MakeMap("first", someobject, "second", another, )
@@ -29,4 +32,16 @@ func NewMessage(conn *net.Conn, args ...interface{}) Message {
 		Data:  MakeMap(args...),
 		Count: 0,
 	}
+}
+
+// usage: ErrorFrom(errs). Returns nil or a concatenated list of error's string
+func ErrorFrom(errs []error) error {
+	if len(errs) == 0 {
+		return nil
+	}
+	var b strings.Builder
+	for _, err := range errs {
+		fmt.Fprintln(&b, err)
+	}
+	return errors.New(b.String())
 }

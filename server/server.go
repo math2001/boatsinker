@@ -2,12 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
-	"strings"
 
 	"github.com/gobwas/ws"
 	"github.com/gobwas/ws/wsutil"
@@ -60,6 +58,9 @@ func main() {
 					return fmt.Errorf("Couldn't encode message and write to socket\n%s",
 						err)
 				}
+				if err := conn.writer.Flush(); err != nil {
+					return fmt.Errorf("Couldn't flush the writer\n%s", err)
+				}
 				return nil
 			}
 		}
@@ -80,17 +81,12 @@ func main() {
 		if !ok {
 			panic(fmt.Sprintf("Should have map[string]interface{}, got %T", e))
 		}
-		var b strings.Builder
+		var errs []error
 		for _, conn := range conns {
-			if err := conn.encoder.Encode(data); err != nil {
-				fmt.Fprintln(&b, err)
-			}
+			errs = append(errs, em.Emit("connection.send",
+				utils.Message{From: conn.raw, Data: data})...)
 		}
-		str := b.String()
-		if str == "" {
-			return nil
-		}
-		return errors.New(str)
+		return utils.ErrorFrom(errs)
 	})
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
