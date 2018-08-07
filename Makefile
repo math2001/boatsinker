@@ -22,10 +22,7 @@ runserver: boatsinker ## Just runs the server
 	./boatsinker
 
 boatsinker: server/**/*.go server/*.go ## Builds the server
-	cd server
-	go build -i -o boatsinker
-	cd ..
-	mv server/boatsinker .
+	go build -i -o boatsinker ./server
 
 buildclient: ## Build the client side of the application
 	parcel build src/index.html
