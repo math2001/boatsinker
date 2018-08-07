@@ -3,6 +3,8 @@ package em
 import (
 	"fmt"
 	"log"
+
+	"github.com/math2001/boatsinker/server/utils"
 )
 
 // A simple event manager
@@ -34,7 +36,7 @@ func (e *EventManager) On(name string, cb callback) {
 	e.events[name] = append(e.events[name], cb)
 }
 
-func (e *EventManager) Emit(name string, args interface{}) []error {
+func (e *EventManager) Emit(name string, args interface{}) error {
 	// handlers should return there is a user error. If it's a dev error,
 	// it should panic *itself*.
 	var errs []error
@@ -42,7 +44,7 @@ func (e *EventManager) Emit(name string, args interface{}) []error {
 	callbacks, ok := e.events[name]
 	if !ok {
 		log.Printf("No handlers for the event '%s'", name)
-		return errs
+		return nil
 	}
 	for _, cb := range callbacks {
 		err := cb(args)
@@ -51,7 +53,7 @@ func (e *EventManager) Emit(name string, args interface{}) []error {
 			log.Print("Error:", err)
 		}
 	}
-	return errs
+	return utils.ErrorFrom(errs)
 }
 
 func NewEventManager(name string) *EventManager {
@@ -60,7 +62,7 @@ func NewEventManager(name string) *EventManager {
 
 var em = NewEventManager("default")
 
-func Emit(name string, args interface{}) []error {
+func Emit(name string, args interface{}) error {
 	return em.Emit(name, args)
 }
 
