@@ -1,13 +1,19 @@
 package app
 
+import "fmt"
+
 type Point struct {
 	X, Y int
 }
 
+func (p Point) String() string {
+	return fmt.Sprintf("<%d, %d>", p.X, p.Y)
+}
+
 type Boat struct {
-	Size     int
-	Pos      Point
-	Rotation int // 0, 1, 2 or 3, in clockwise direction
+	Size int
+	Pos  Point
+	Rot  int // 0, 1 -> horizontal vertical
 }
 
 type Board struct {
