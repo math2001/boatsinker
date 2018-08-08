@@ -45,3 +45,10 @@ func ErrorFrom(errs []error) error {
 	}
 	return errors.New(b.String())
 }
+
+func Must(val interface{}, err error) interface{} {
+	if err != nil {
+		log.Fatal(err)
+	}
+	return val
+}

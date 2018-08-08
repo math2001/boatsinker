@@ -17,6 +17,9 @@ dev: ## Nice and friendly to start the server and parcel, side by side
 		make watchsrc &
 	fi
 
+test: ## Run all the tests
+	go test ./server/...
+
 runserver: boatsinker ## Just runs the server
 	clear
 	./boatsinker

@@ -22,6 +22,7 @@ func validBoats(boats []Boat) error {
 	}
 	// ensure we have the right amount of boats of the right size
 	var sizes = make(map[int]int)
+	var occupied []Point
 	for _, boat := range boats {
 		if boat.Size <= 1 {
 			return fmt.Errorf("Invalid boat size: should be >1, got %d", boat.Size)
@@ -33,9 +34,27 @@ func validBoats(boats []Boat) error {
 		if (boat.Rot == 0 && boat.Pos.X+boat.Size >= 10) || (boat.Rot == 1 && boat.Pos.Y+boat.Size >= 10) {
 			return fmt.Errorf("Invalid boat position: some of it is outside the map")
 		}
+		if boat.Rot != 0 && boat.Rot != 1 {
+			return fmt.Errorf("Invlaid boat rotation: should be 0 or 1, got %d", boat.Rot)
+		}
+		fmt.Println(boat, boat.Pos.X >= 10)
 		sizes[boat.Size] += 1
+		var pt Point
+		for i := 0; i < boat.Size; i++ {
+			if boat.Rot == 0 {
+				pt = Point{boat.Pos.X + i, boat.Pos.Y}
+			} else {
+				pt = Point{boat.Pos.X, boat.Pos.Y + i}
+			}
+			for _, t := range occupied {
+				if t == pt {
+					return fmt.Errorf("Invalid boats position: they collide on the case %s", pt)
+				}
+			}
+			occupied = append(occupied, pt)
+		}
 	}
-	if reflect.DeepEqual(sizes, boat_sizes_count) {
+	if !reflect.DeepEqual(sizes, boat_sizes_count) {
 		return fmt.Errorf("Invalid boat sizes: should have %v, got %v", sizes, boat_sizes_count)
 	}
 	return nil
