@@ -1,6 +1,6 @@
 export default {
 
-  log: false,
+  log: true,
   events: {},
 
   on(name, cb) {

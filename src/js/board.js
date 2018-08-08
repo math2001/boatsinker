@@ -1,6 +1,6 @@
 export default class Board {
 
-  constructor() {
+  constructor(parent) {
     let board = document.createElement('div')
     board.classList.add('board')
     this.cells = []
@@ -12,7 +12,7 @@ export default class Board {
       board.appendChild(cell)
     }
 
-    document.body.appendChild(board)
+    parent.appendChild(board)
   }
 
   fromxy(x, y) {

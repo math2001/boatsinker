@@ -3,7 +3,7 @@ import em from './em.js'
 export default {
 
   init() {
-    this.manageDOM()
+    em.on('get.name', this.manageDOM.bind(this))
   },
 
   manageDOM() {

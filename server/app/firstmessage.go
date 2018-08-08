@@ -39,7 +39,8 @@ func handleFirstMessage(players []Player, msg utils.Message) ([]Player, error) {
 	}
 	if len(players) == 2 {
 		if err := em.Emit("connection.broadcast",
-			utils.MakeMap("kind", "state change", "state", "setup")); err != nil {
+			utils.MakeMap("kind", "state change", "state", "setup",
+				"boat_sizes", boat_sizes, "size", mapsize)); err != nil {
 			fmt.Printf("Error while broadcasting 'setup' message:\n%s", err)
 		}
 	}

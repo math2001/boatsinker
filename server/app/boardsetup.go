@@ -7,14 +7,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-var boat_sizes_count = map[int]int{
-	// boat size: count
-	5: 1,
-	4: 1,
-	3: 2,
-	2: 1,
-}
-
 // makes sure that there is a right amount of boats, of the right size, etc...
 func validBoats(boats []Boat) error {
 	if len(boats) != 5 {
@@ -54,8 +46,8 @@ func validBoats(boats []Boat) error {
 			occupied = append(occupied, pt)
 		}
 	}
-	if !reflect.DeepEqual(sizes, boat_sizes_count) {
-		return fmt.Errorf("Invalid boat sizes: should have %v, got %v", sizes, boat_sizes_count)
+	if !reflect.DeepEqual(sizes, boat_sizes) {
+		return fmt.Errorf("Invalid boat sizes: should have %v, got %v", sizes, boat_sizes)
 	}
 	return nil
 }

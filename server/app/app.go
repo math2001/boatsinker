@@ -13,6 +13,14 @@ var players []Player
 // the size of the board (10 by 10)
 const mapsize = 10
 
+var boat_sizes = map[int]int{
+	// boat size: count
+	5: 1,
+	4: 1,
+	3: 2,
+	2: 1,
+}
+
 func Start() {
 	em.On("connection.closed", func(e interface{}) error {
 		// conn, ok := e.(net.Conn)
