@@ -45,6 +45,10 @@ const toolbar = {
 
   select(e) {
     if (this.currentBoat) {
+      em.emit('boat.unselect', {
+        size: parseInt(this.currentBoat.getAttribute('data-size')),
+        rotation: parseInt(this.currentBoat.getAttribute('data-rotation'))
+      })
       this.currentBoat.classList.remove('selected')
       if (this.currentBoat === e.target) {
         // deselect
@@ -60,6 +64,10 @@ const toolbar = {
 
     if (this.currentBoat) {
       this.currentBoat.classList.add('selected')
+      em.emit('boat.select', {
+        size: parseInt(this.currentBoat.getAttribute('data-size')),
+        rotation: parseInt(this.currentBoat.getAttribute('data-rotation'))
+      })
     }
   }
 
