@@ -54,15 +54,12 @@ const toolbar = {
         rotation: parseInt(this.currentBoat.getAttribute('data-rotation'))
       })
       this.currentBoat.classList.remove('selected')
-      if (this.currentBoat === e.target) {
-        // deselect
+      if (this.currentBoat === e.target) { // deselect
         this.currentBoat = null
-      } else {
-        // clicked on an other boat (e.target)
+      } else { // clicked on an other boat (e.target)
         this.currentBoat = e.target
       }
-    } else {
-      // select new boat
+    } else { // select new boat
       this.currentBoat = e.target
     }
 

@@ -83,9 +83,9 @@ export default class Board {
         cell.classList.remove('active')
         cell.classList.add('boat')
       }
+      em.emit("boat.placed", Object.assign({ x, y }, this.boat))
       this.boat = null
       this.highlightedcellsindex = []
-      em.emit("boat.place", Object.assign({ x, y }, this.boat))
     } else {
       alert("Can't put it there mate, sorry.")
     }
