@@ -25,3 +25,7 @@
   height: calc(var(--size) * var(--cellsize));
   line-height: calc(var(--size) * var(--cellsize));
 }
+
+.toolbar .boat.selected {
+  opacity: .4;
+}

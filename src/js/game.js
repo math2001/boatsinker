@@ -13,8 +13,7 @@ const toolbar = {
   init() {
     this.toolbar = document.querySelector('#toolbar')
     this.boats = []
-    this.draggedBoat = null
-    this.offset = null
+    this.currentBoat = null
     em.on("got.setup", conf => {
       for (const size in conf.boatsizes) {
         for (let i = 0; i < boat_sizes[size]; i++) {
@@ -22,8 +21,6 @@ const toolbar = {
         }
       }
     })
-    document.addEventListener('mousemove', this.drag.bind(this))
-    document.addEventListener('mouseup', this.dragend.bind(this))
   },
 
   newBoat(size, rotation) {
@@ -34,48 +31,38 @@ const toolbar = {
     boat.setAttribute('data-rotation', rotation)
     boat.classList.add('boat')
     this.toolbar.appendChild(boat)
-    boat.addEventListener('contextmenu', this.click.bind(this))
-    boat.addEventListener('mousedown', this.dragstart.bind(this))
+    boat.addEventListener('contextmenu', this.rotate.bind(this))
+    boat.addEventListener('click', this.select.bind(this))
     this.boats.push(boat)
   },
 
-  click(e) {
+  rotate(e) {
     e.preventDefault()
     e.target.setAttribute('data-rotation',
       e.target.getAttribute('data-rotation') === '0' ? '1' : '0'
     )
   },
 
-  dragstart(e) {
-    this.draggedBoat = e.target
-    this.draggedBoat.style.position = 'absolute'
-    this.draggedBoat.style.opacity = .4
-    const r = this.draggedBoat.getBoundingClientRect()
-    this.offset = {
-      x: e.clientX - r.left,
-      y: e.clientY - r.top,
+  select(e) {
+    if (this.currentBoat) {
+      this.currentBoat.classList.remove('selected')
+      if (this.currentBoat === e.target) {
+        // deselect
+        this.currentBoat = null
+      } else {
+        // clicked on an other boat (e.target)
+        this.currentBoat = e.target
+      }
+    } else {
+      // select new boat
+      this.currentBoat = e.target
     }
-    console.log(this.offset)
-  },
 
-  drag(e) {
-    if (this.draggedBoat && this.draggedBoat !== null) {
-      this.draggedBoat.style.left = e.clientX - this.offset.x + 'px'
-      this.draggedBoat.style.top = e.clientY - this.offset.y + 'px'
+    if (this.currentBoat) {
+      this.currentBoat.classList.add('selected')
     }
-  },
-
-  dragend(e) {
-    if (!this.draggedBoat) {
-      return
-    }
-    this.draggedBoat.style.position = 'static'
-    this.draggedBoat.style.opacity = 1
-    this.draggedBoat.style.left = null
-    this.draggedBoat.style.top = null
-    this.draggedBoat = null
-    this.offset = null
   }
+
 }
 
 export default {
