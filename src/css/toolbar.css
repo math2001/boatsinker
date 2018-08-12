@@ -29,3 +29,7 @@
 .toolbar .boat.selected {
   opacity: .4;
 }
+
+.toolbar .boat.placed {
+  display: none;
+}

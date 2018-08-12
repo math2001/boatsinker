@@ -12,6 +12,7 @@ export default {
         }
       }
     })
+    em.on("boat.placed", this.boatplaced.bind(this))
   },
 
   newBoat(size, rotation) {
@@ -61,7 +62,20 @@ export default {
         rotation: parseInt(this.currentBoat.getAttribute('data-rotation'))
       })
     }
-  }
+  },
 
+  boatplaced(e) {
+    if (!this.currentBoat) {
+      throw new Error(`How the f*** did a boat got placed? I (toolbar) got nothing!`)
+    }
+    const size = parseInt(this.currentBoat.getAttribute('data-size'))
+    const rotation = parseInt(this.currentBoat.getAttribute('data-rotation'))
+    if (size !== e.size || rotation !== e.rotation) {
+      throw new Error(`The boat that got place doesn't match up with the boat \
+      I (toolbar) got! ${size} !== ${e.size} or ${rotation} !== ${e.rotation}`)
+    }
+    this.currentBoat.classList.add('placed')
+    this.currentBoat = null
+  }
 }
 
