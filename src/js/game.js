@@ -86,8 +86,8 @@ export default {
 
   setup() {
     const boards = document.querySelector('#boards')
-    this.own = new Board(boards)
-    this.other = new Board(boards)
+    this.own = new Board(boards, {own: true})
+    this.other = new Board(boards, {own: false})
   }
 
 }

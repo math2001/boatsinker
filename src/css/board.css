@@ -15,3 +15,9 @@
   background-color: #eee;
 }
 
+.board .cell.active {
+  background-color: #aaa;
+}
+.board .cell.active:hover {
+  cursor: pointer;
+}
