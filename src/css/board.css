@@ -18,13 +18,29 @@
 .board .cell.active {
   background-color: #ddd;
 }
+
 .board.error .cell:hover {
   background-color: var(--error);
 }
+
 .board .cell.active:hover {
   cursor: pointer;
 }
 
 .board .cell.boat {
   background-color: #aaa;
+}
+
+.board .cell.error {
+  background-color: var(--error);
+  animation: blinkerror 1s infinite both alternate;
+}
+
+@keyframes blinkerror {
+  0% {
+    background-color: var(--warning);
+  }
+  100% {
+    background-color: var(--error);
+  }
 }

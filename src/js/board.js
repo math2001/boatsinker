@@ -47,7 +47,10 @@ export default class Board {
 
   mouseleave(e) {
     for (const coor of this.highlightedcellsindex) {
-      this.cellfromxy(...coor).classList.remove('active')
+      const cell = this.cellfromxy(...coor)
+      cell.classList.remove('active')
+      // the class error can be added if there was a boat already on the cell
+      cell.classList.remove('error')
     }
     this.highlightedcellsindex = []
     this.board.classList.remove('error')
@@ -70,7 +73,12 @@ export default class Board {
         }
       }
       for (const coor of this.highlightedcellsindex) {
-        this.cellfromxy(...coor).classList.add('active')
+        const cell = this.cellfromxy(...coor)
+        if (cell.classList.contains('boat')) { // there is a boat on that cell
+          cell.classList.add('error')
+        } else {
+          cell.classList.add('active')
+        }
       }
     }
   }
