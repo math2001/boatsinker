@@ -1,8 +1,10 @@
 import em from './em.js'
 import GetName from './getname.js'
+import Toolbar from './toolbar.js'
 import Game from './game.js'
 
 GetName.init()
+Toolbar.init()
 Game.init()
 
 window.addEventListener('load', e => {
