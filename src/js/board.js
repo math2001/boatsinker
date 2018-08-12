@@ -76,8 +76,11 @@ export default class Board {
   }
 
   click(e) {
+    // checks wether the position (e.target) is valid for the boat (this.boat).
+    // If it is, trigger boat.placed with position and information of the boat
+    if (!this.boat) return
     const [x, y] = this.celltoxy(e.target)
-    if (this.boat && this.valid(x, y)) {
+    if (this.valid(x, y)) {
       for (const coor of this.highlightedcellsindex) {
         const cell = this.cellfromxy(...coor)
         cell.classList.remove('active')
