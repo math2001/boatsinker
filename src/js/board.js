@@ -56,7 +56,7 @@ export default class Board {
   mouseenter(e) {
     if (this.boat) {
       const [x, y] = this.celltoxy(e.target)
-      if (!valid(x, y, this.boat, this.opts)) {
+      if (!this.valid(x, y)) {
         this.board.classList.add('error')
         return
       }
@@ -76,7 +76,22 @@ export default class Board {
   }
 
   click(e) {
-
+    const [x, y] = this.celltoxy(e.target)
+    if (this.boat && this.valid(x, y)) {
+      for (const coor of this.highlightedcellsindex) {
+        const cell = this.cellfromxy(...coor)
+        cell.classList.remove('active')
+        cell.classList.add('boat')
+      }
+      this.boat = null
+      this.highlightedcellsindex = []
+      em.emit("boat.place", Object.assign({ x, y }, this.boat))
+    } else {
+      alert("Can't put it there mate, sorry.")
+    }
   }
 
+  valid(x, y) {
+    return valid(x, y, this.boat, this.opts)
+  }
 }

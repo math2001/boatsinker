@@ -16,11 +16,15 @@
 }
 
 .board .cell.active {
-  background-color: #aaa;
+  background-color: #ddd;
 }
 .board.error .cell:hover {
   background-color: var(--error);
 }
 .board .cell.active:hover {
   cursor: pointer;
+}
+
+.board .cell.boat {
+  background-color: #aaa;
 }
