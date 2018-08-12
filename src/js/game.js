@@ -38,6 +38,10 @@ const toolbar = {
 
   rotate(e) {
     e.preventDefault()
+    if (e.target.classList.contains('selected')) {
+      alert("Please unselect this boat before rotating it.")
+      return
+    }
     e.target.setAttribute('data-rotation',
       e.target.getAttribute('data-rotation') === '0' ? '1' : '0'
     )
