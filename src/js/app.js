@@ -32,5 +32,5 @@ window.addEventListener('load', e => {
 
   // debug
   // em.emit('get.name')
-  em.emit('got.setup', { size: 10, boatsizes: { 5: 1, 4: 1, 3: 2, 2: 1 } })
+  em.emit('got.setup', { width: 10, height: 10, boatsizes: { 5: 1, 4: 1, 3: 2, 2: 1 } })
 })

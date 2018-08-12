@@ -18,6 +18,9 @@
 .board .cell.active {
   background-color: #aaa;
 }
+.board.error .cell:hover {
+  background-color: var(--error);
+}
 .board .cell.active:hover {
   cursor: pointer;
 }

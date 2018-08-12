@@ -84,10 +84,10 @@ export default {
     em.on('got.setup', this.setup.bind(this))
   },
 
-  setup() {
+  setup(opts) {
     const boards = document.querySelector('#boards')
-    this.own = new Board(boards, {own: true})
-    this.other = new Board(boards, {own: false})
+    this.own = new Board(boards,   {width: opts.width, height: opts.height, own: true})
+    this.other = new Board(boards, {width: opts.width, height: opts.height, own: false})
   }
 
 }

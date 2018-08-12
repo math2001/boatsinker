@@ -9,5 +9,6 @@
 :root {
   --cellsize: 20px;
   --cells: 10;
+  --error: #f45342;
 }
 
