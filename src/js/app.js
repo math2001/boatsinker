@@ -7,15 +7,15 @@ Game.init()
 
 window.addEventListener('load', e => {
 
-  const ws = new WebSocket(`ws://${location.host}/ws`)
+  // const ws = new WebSocket(`ws://${location.host}/ws`)
+  // ws.onmessage = msg => {
+  //   em.emit('connection.msg', JSON.parse(msg.data))
+  // }
 
   em.on('connection.send', msg => {
     ws.send(JSON.stringify(msg))
   })
 
-  ws.onmessage = msg => {
-    em.emit('connection.msg', JSON.parse(msg.data))
-  }
 
   em.on('got.name', name => {
     em.emit('connection.send', {

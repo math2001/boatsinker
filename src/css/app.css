@@ -1,5 +1,13 @@
 @import "./board.css";
+@import "./toolbar.css";
 
 * {
-  box-sizing: content-box;
+  box-sizing: border-box;
+  font-family: "Roboto Mono";
 }
+
+:root {
+  --cellsize: 20px;
+  --cells: 10;
+}
+

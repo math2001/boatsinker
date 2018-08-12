@@ -1,9 +1,7 @@
 .board {
-  --cell-size: 20px;
-  --cells: 10;
   display: grid;
-  width: calc(var(--cell-size) * var(--cells));
-  height: calc(var(--cell-size) * var(--cells));
+  width: calc(var(--cellsize) * var(--cells));
+  height: calc(var(--cellsize) * var(--cells));
   outline: 1px solid;
   grid-template-columns: repeat(var(--cells), 1fr);
 }

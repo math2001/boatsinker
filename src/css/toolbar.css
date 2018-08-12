@@ -1,0 +1,27 @@
+.toolbar {
+  outline: 1px solid;
+  min-height: 30px;
+}
+
+.toolbar .boat {
+  user-select: none;
+  -moz-user-select: none;
+  cursor: pointer;
+  border: 1px solid;
+  display: inline-block;
+  margin: 20px;
+  background-color: #aaa;
+  text-align: center;
+}
+
+.toolbar .boat[data-rotation="0"] {
+  width: calc(var(--size) * var(--cellsize));
+  height: var(--cellsize);
+  line-height: var(--cellsize);
+}
+
+.toolbar .boat[data-rotation="1"] {
+  width: var(--cellsize);
+  height: calc(var(--size) * var(--cellsize));
+  line-height: calc(var(--size) * var(--cellsize));
+}
