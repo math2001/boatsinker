@@ -1,7 +1,6 @@
 import em from './em.js'
 
-function valid(x, y, boat, board) {
-  // note that this doesn't check collision between boats (yet)
+function isInsideBoard(x, y, boat, board) {
   return (boat.rotation === 0 && x + boat.size <= board.width)
     || (boat.rotation === 1 && y + boat.size <= board.height)
 }
@@ -59,7 +58,7 @@ export default class Board {
   mouseenter(e) {
     if (this.boat) {
       const [x, y] = this.celltoxy(e.target)
-      if (!this.valid(x, y)) {
+      if (!isInsideBoard(x, y, this.boat, this.opts)) {
         this.board.classList.add('error')
         return
       }
@@ -88,21 +87,16 @@ export default class Board {
     // If it is, trigger boat.placed with position and information of the boat
     if (!this.boat) return
     const [x, y] = this.celltoxy(e.target)
-    if (this.valid(x, y)) {
-      for (const coor of this.highlightedcellsindex) {
-        const cell = this.cellfromxy(...coor)
-        cell.classList.remove('active')
-        cell.classList.add('boat')
-      }
-      em.emit("boat.placed", Object.assign({ x, y }, this.boat))
-      this.boat = null
-      this.highlightedcellsindex = []
-    } else {
-      alert("Can't put it there mate, sorry.")
+    if (!isInsideBoard(x, y, this.boat, this.opts)) {
+      return alert("The boat has to be inside the board.")
     }
-  }
-
-  valid(x, y) {
-    return valid(x, y, this.boat, this.opts)
+    for (const coor of this.highlightedcellsindex) {
+      const cell = this.cellfromxy(...coor)
+      cell.classList.remove('active')
+      cell.classList.add('boat')
+    }
+    em.emit("boat.placed", Object.assign({ x, y }, this.boat))
+    this.boat = null
+    this.highlightedcellsindex = []
   }
 }
