@@ -13,6 +13,7 @@ import (
 
 type callback func(interface{}) error
 
+// EventManager is a simple pub/sub
 type EventManager struct {
 	// purely for debug purposes
 	name   string
@@ -25,11 +26,12 @@ func logevent(name string, args interface{}) {
 	if _, ok := args.(fmt.Stringer); ok {
 		fmt.Fprintf(&b, "%s", args)
 	} else {
-		fmt.Fprintf(&b, "%#v", args)
+		fmt.Fprintf(&b, "%v", args)
 	}
 	log.Print(b.String())
 }
 
+// On adds a listener (a function) to an event
 func (e *EventManager) On(name string, cb callback) {
 	_, ok := e.events[name]
 	if !ok {
@@ -38,6 +40,7 @@ func (e *EventManager) On(name string, cb callback) {
 	e.events[name] = append(e.events[name], cb)
 }
 
+// Emit triggers every listener bound to the event with the given argument
 func (e *EventManager) Emit(name string, args interface{}) error {
 	// handlers should return there is a user error. If it's a dev error,
 	// it should panic *itself*.
@@ -58,16 +61,19 @@ func (e *EventManager) Emit(name string, args interface{}) error {
 	return utils.ErrorFrom(errs)
 }
 
+// NewEventManager creates a new event manager
 func NewEventManager(name string) *EventManager {
 	return &EventManager{name: name, events: make(map[string][]callback)}
 }
 
 var em = NewEventManager("default")
 
+// Emit calls the default event manager's Emit method
 func Emit(name string, args interface{}) error {
 	return em.Emit(name, args)
 }
 
+// On calls the default event manager's On method
 func On(name string, cb callback) {
 	em.On(name, cb)
 }

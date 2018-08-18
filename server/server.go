@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"strings"
 
 	"github.com/gobwas/ws"
 	"github.com/gobwas/ws/wsutil"
@@ -14,18 +15,11 @@ import (
 	"github.com/math2001/boatsinker/server/utils"
 )
 
-const PORT = 9999
+const port = 9999
 
 // the server manages the "raw" connection. It doesn't know anything about the game
 // It could be used in a whole different application.
 // Every connection.* events is managed my him (either triggered or listened)
-
-type Conn struct {
-	Closed bool
-	Raw    *net.Conn
-	Writer *json.Encoder
-	Reader *json.Decoder
-}
 
 type connection struct {
 	closed  bool
@@ -37,12 +31,20 @@ type connection struct {
 }
 
 func (c connection) String() string {
-	return fmt.Sprintf("connection %t", c.closed)
+	var b strings.Builder
+	fmt.Fprint(&b, "connection ")
+	if c.closed {
+		fmt.Fprintf(&b, "'closed'")
+	} else {
+		fmt.Fprintf(&b, "'open'")
+	}
+	return b.String()
 }
 
 func main() {
-	addr := fmt.Sprintf("0.0.0.0:%d", PORT)
-	fmt.Printf("Listening on http://%s\n", addr)
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+	addr := fmt.Sprintf("0.0.0.0:%d", port)
+	log.Printf("Listening on http://%s\n", addr)
 	http.Handle("/", http.FileServer(http.Dir("dist")))
 
 	var conns []connection
@@ -141,7 +143,7 @@ func main() {
 					log.Printf("Error on 'connection.msg':\n%s", err)
 				}
 
-				messagecount += 1
+				messagecount++
 			}
 		}()
 	})

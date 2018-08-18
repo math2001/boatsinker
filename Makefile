@@ -1,5 +1,5 @@
-.PHONY: dev runserver buildclient watchsrc help
-.SILENT: dev help
+.PHONY: help dev test lint runserver buildclient watchsrc
+.SILENT: dev help lint
 .ONESHELL:
 
 help:
@@ -19,6 +19,9 @@ dev: ## Nice and friendly to start the server and parcel, side by side
 
 test: ## Run all the tests
 	go test ./server/...
+
+lint: ## Lists all the lints messages for the server
+	golint server/...
 
 runserver: boatsinker ## Just runs the server
 	clear

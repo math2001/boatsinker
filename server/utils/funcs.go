@@ -8,7 +8,8 @@ import (
 	"strings"
 )
 
-// usage: MakeMap("first", someobject, "second", another, )
+// MakeMap makes a map from a list of argument, where the keys are strings
+// usage: MakeMap("first", someobject, "second", another)
 // returns map[string]interface{}{first: someobject, second, another}
 func MakeMap(args ...interface{}) map[string]interface{} {
 	var m = make(map[string]interface{})
@@ -25,6 +26,7 @@ func MakeMap(args ...interface{}) map[string]interface{} {
 	return m
 }
 
+// NewMessage creates a new message from
 // usage: NewMessage(conn, "kind", "something", "data": obj)
 func NewMessage(conn *net.Conn, args ...interface{}) Message {
 	return Message{
@@ -34,7 +36,7 @@ func NewMessage(conn *net.Conn, args ...interface{}) Message {
 	}
 }
 
-// usage: ErrorFrom(errs). Returns nil or a concatenated list of error's string
+// ErrorFrom concatenates a list of errors into one error.
 func ErrorFrom(errs []error) error {
 	if len(errs) == 0 {
 		return nil
@@ -46,6 +48,7 @@ func ErrorFrom(errs []error) error {
 	return errors.New(b.String())
 }
 
+// Must returns makes sure the error is nil.
 func Must(val interface{}, err error) interface{} {
 	if err != nil {
 		log.Fatal(err)

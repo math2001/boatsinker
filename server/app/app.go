@@ -22,7 +22,10 @@ var boatsizes = map[int]int{
 	2: 1,
 }
 
+// Start listen to connection events. They're the own who are going to actually
+// start up the game
 func Start() {
+
 	em.On("connection.closed", func(e interface{}) error {
 		// conn, ok := e.(net.Conn)
 		// if !ok {
@@ -33,6 +36,7 @@ func Start() {
 		log.Fatal("A player left. Shutdown")
 		return nil
 	})
+
 	em.On("connection.msg", func(e interface{}) error {
 		msg, ok := e.(utils.Message)
 		if !ok {
