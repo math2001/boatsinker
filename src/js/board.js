@@ -1,8 +1,8 @@
 import em from './em.js'
 
 function isInsideBoard(boat, board) {
-  return (boat.rotation === 0 && boat.x + boat.size <= board.width)
-    || (boat.rotation === 1 && boat.y + boat.size <= board.height)
+  return (boat.rotation === 0 && boat.pos.x + boat.size <= board.width)
+    || (boat.rotation === 1 && boat.pos.y + boat.size <= board.height)
 }
 
 function collides(boat, boats) {
@@ -11,18 +11,18 @@ function collides(boat, boats) {
   for (const b of boats) {
     for (let i = 0; i < b.size; i++) {
       if (b.rotation == 0) {
-        occupied_cells.push([b.x + i, b.y])
+        occupied_cells.push([b.pos.x + i, b.pos.y])
       } else {
-        occupied_cells.push([b.x, b.y + i])
+        occupied_cells.push([b.pos.x, b.pos.y + i])
       }
     }
   }
   const targetcells = []
   for (let i = 0; i < boat.size; i++) {
     if (boat.rotation == 0) {
-      targetcells.push([boat.x + i, boat.y])
+      targetcells.push([boat.pos.x + i, boat.pos.y])
     } else {
-      targetcells.push([boat.x, boat.y + i])
+      targetcells.push([boat.pos.x, boat.pos.y + i])
     }
   }
   return occupied_cells.some(c => {
@@ -49,7 +49,7 @@ export default class Board {
       em.on('boat.unselect', boat => this.boat = null)
       em.on('boat.sendsetup', () => {
         em.emit('connection.send', {
-          kind: 'setup',
+          kind: 'board setup',
           boats: this.boats
         })
       })
@@ -97,7 +97,7 @@ export default class Board {
   mouseenter(e) {
     if (this.boat) {
       const [x, y] = this.celltoxy(e.target)
-      if (!isInsideBoard(Object.assign({ x, y }, this.boat), this.opts)) {
+      if (!isInsideBoard(Object.assign({ pos: { x, y } }, this.boat), this.opts)) {
         this.board.classList.add('error')
         return
       }
@@ -126,7 +126,7 @@ export default class Board {
     // If it is, trigger boat.placed with position and information of the boat
     if (!this.boat) return
     const [x, y] = this.celltoxy(e.target)
-    const boat = Object.assign({ x, y }, this.boat)
+    const boat = Object.assign({ pos: { x, y } }, this.boat)
     if (!isInsideBoard(boat, this.opts)) {
       return alert("The boat has to be inside the board.")
     }

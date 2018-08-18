@@ -6,7 +6,8 @@ import (
 
 // Point represents a 2d vector
 type Point struct {
-	X, Y int
+	X int `json:"x"`
+	Y int `json:"y"`
 }
 
 func (p Point) String() string {
@@ -15,9 +16,9 @@ func (p Point) String() string {
 
 // Boat represents a boat no a board
 type Boat struct {
-	Size int
-	Pos  Point
-	Rot  int // 0, 1 -> horizontal vertical
+	Size     int
+	Pos      Point
+	Rotation int // 0, 1 -> horizontal vertical
 }
 
 // Board represents a board with the boats and hits
@@ -28,6 +29,7 @@ type Board struct {
 
 // Player represents a client
 type Player struct {
-	Name  string `json:"name"`
+	Name  string
+	ID    int
 	Board Board
 }

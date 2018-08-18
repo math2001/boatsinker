@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"log"
+	"net"
 
 	"github.com/math2001/boatsinker/server/em"
 	"github.com/math2001/boatsinker/server/utils"
@@ -18,7 +19,7 @@ type firstmessage struct {
 
 // check the number of players and responds accordingly to the message (which
 // *has* to be the first one)
-func handleFirstMessage(players []Player, msg utils.Message) ([]Player, error) {
+func handleFirstMessage(players map[*net.Conn]*Player, msg utils.Message) error {
 	if len(players) == 2 {
 		// we have enough players.
 		if err := em.Emit("connection.send", utils.NewMessage(msg.From,
@@ -31,7 +32,7 @@ func handleFirstMessage(players []Player, msg utils.Message) ([]Player, error) {
 	}
 	var data firstmessage
 	mapstructure.Decode(msg.Data, &data)
-	players = append(players, Player{Name: data.Name})
+	players[msg.From] = &Player{Name: data.Name}
 	if data.Kind != "request" {
 		log.Printf("Got invalid first message. Should have 'request', got '%s'", data.Kind)
 		if err := em.Emit("connection.close", msg.From); err != nil {
@@ -47,5 +48,5 @@ func handleFirstMessage(players []Player, msg utils.Message) ([]Player, error) {
 			fmt.Printf("Error while broadcasting 'setup' message:\n%s", err)
 		}
 	}
-	return players, nil
+	return nil
 }

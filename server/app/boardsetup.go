@@ -2,15 +2,19 @@ package app
 
 import (
 	"fmt"
+	"log"
+	"net"
 	"reflect"
 
+	"github.com/math2001/boatsinker/server/utils"
 	"github.com/mitchellh/mapstructure"
 )
 
 // makes sure that there is a right amount of boats, of the right size, etc...
 func validBoats(boats []Boat) error {
-	if len(boats) != 5 {
-		return fmt.Errorf("Invalid number of boats. Should have 5, got %d", len(boats))
+	if len(boats) != len(boatsizes) {
+		return fmt.Errorf("Invalid number of boats. Should have %d, got %d", len(boatsizes),
+			len(boats))
 	}
 	// ensure we have the right amount of boats of the right size
 	var sizes = make(map[int]int)
@@ -19,21 +23,21 @@ func validBoats(boats []Boat) error {
 		if boat.Size <= 1 {
 			return fmt.Errorf("Invalid boat size: should be >1, got %d", boat.Size)
 		}
-		if boat.Pos.X < 0 || boat.Pos.X >= 10 || boat.Pos.Y < 0 || boat.Pos.Y >= 10 {
+		if boat.Pos.X < 0 || boat.Pos.X >= width || boat.Pos.Y < 0 || boat.Pos.Y >= height {
 			return fmt.Errorf("Invalid boat origin point: should be 0 < x or y < 10, got %s",
 				boat.Pos)
 		}
-		if (boat.Rot == 0 && boat.Pos.X+boat.Size >= 10) || (boat.Rot == 1 && boat.Pos.Y+boat.Size >= 10) {
+		if (boat.Rotation == 0 && boat.Pos.X+boat.Size >= width) || (boat.Rotation == 1 && boat.Pos.Y+boat.Size >= height) {
 			return fmt.Errorf("Invalid boat position: some of it is outside the map")
 		}
-		if boat.Rot != 0 && boat.Rot != 1 {
-			return fmt.Errorf("Invlaid boat rotation: should be 0 or 1, got %d", boat.Rot)
+		if boat.Rotation != 0 && boat.Rotation != 1 {
+			return fmt.Errorf("Invlaid boat rotation: should be 0 or 1, got %d",
+				boat.Rotation)
 		}
-		fmt.Println(boat, boat.Pos.X >= 10)
 		sizes[boat.Size]++
 		var pt Point
 		for i := 0; i < boat.Size; i++ {
-			if boat.Rot == 0 {
+			if boat.Rotation == 0 {
 				pt = Point{boat.Pos.X + i, boat.Pos.Y}
 			} else {
 				pt = Point{boat.Pos.X, boat.Pos.Y + i}
@@ -52,15 +56,21 @@ func validBoats(boats []Boat) error {
 	return nil
 }
 
-func handleBoardSetup(players []Player, data map[string]interface{}) error {
-	raw, ok := data["boats"]
-	if !ok {
-		return fmt.Errorf("Not boat setup in data: %s", data)
+type boardsetup struct {
+	Kind  string
+	Boats []Boat
+}
+
+func handleBoardSetup(players map[*net.Conn]*Player, msg utils.Message) error {
+	var b boardsetup
+	if err := mapstructure.Decode(msg.Data, &b); err != nil {
+		log.Fatalf("Couldn't convert msg to boardsetup: %s", err)
 	}
-	var boats []Boat
-	mapstructure.Decode(&boats, raw)
-	if err := validBoats(boats); err != nil {
+	if err := validBoats(b.Boats); err != nil {
 		return err
+	}
+	players[msg.From].Board = Board{
+		Boats: b.Boats,
 	}
 	return nil
 }

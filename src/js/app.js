@@ -17,7 +17,6 @@ window.addEventListener('load', e => {
     ws.send(JSON.stringify(msg))
   })
 
-
   em.on('connection.msg', msg => {
     if (msg.kind == 'state change' && msg.state == 'setup') {
       em.emit('got.accepted', {

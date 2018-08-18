@@ -9,9 +9,10 @@ import (
 // It is used to represent messages that have been received and messages that
 // have to be sent
 type Message struct {
-	Data  map[string]interface{}
-	From  *net.Conn
-	Count int
+	Data   map[string]interface{}
+	From   *net.Conn
+	Count  int
+	FromID int
 }
 
 func (m Message) String() string {

@@ -3,12 +3,13 @@ package app
 import (
 	"fmt"
 	"log"
+	"net"
 
 	"github.com/math2001/boatsinker/server/em"
 	"github.com/math2001/boatsinker/server/utils"
 )
 
-var players []Player
+var players = make(map[*net.Conn]*Player)
 
 // the size of the board
 const width = 10
@@ -17,9 +18,9 @@ const height = 10
 var boatsizes = map[int]int{
 	// boat size: count
 	5: 1,
-	4: 1,
-	3: 2,
-	2: 1,
+	// 4: 1,
+	// 3: 2,
+	// 2: 1,
 }
 
 // Start listen to connection events. They're the own who are going to actually
@@ -43,15 +44,15 @@ func Start() {
 			panic(fmt.Sprintf("Should have utils.Message, got %T", e))
 		}
 		if msg.Count == 1 {
-			var err error
-			players, err = handleFirstMessage(players, msg)
-			return err
+			return handleFirstMessage(players, msg)
 		}
-		// if this isn't the first message, and we haven't got 2 players, there's a problem
+		// if this isn't the first message, and we haven't got 2 players,
+		// there's a problem. This shouldn't happen
 		if len(players) != 2 {
 			log.Fatalf("Got message second %s, but haven't got a second player. Shutdown",
 				msg)
 		}
+
 		kind, ok := msg.Data["kind"]
 		if !ok {
 			log.Print("No 'kind' field in message.")
@@ -60,8 +61,8 @@ func Start() {
 			}
 			return nil
 		}
-		if kind == "board ready" {
-			if err := handleBoardSetup(players, msg.Data); err != nil {
+		if kind == "board setup" {
+			if err := handleBoardSetup(players, msg); err != nil {
 				log.Fatalf("Invalid 'board ready' message: %s", err)
 			}
 			return nil
