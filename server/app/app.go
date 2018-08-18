@@ -28,12 +28,7 @@ var boatsizes = map[int]int{
 func Start() {
 
 	em.On("connection.closed", func(e interface{}) error {
-		// conn, ok := e.(net.Conn)
-		// if !ok {
-		// 	panic("Should have net.Conn")
-		// }
-		// when a connection is closed, we close the game, and shutdown
-		// ... for now
+		// when a connection is closed, we close the game, and shutdown for now
 		log.Fatal("A player left. Shutdown")
 		return nil
 	})
