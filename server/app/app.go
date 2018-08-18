@@ -4,12 +4,17 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"reflect"
 
 	"github.com/math2001/boatsinker/server/em"
 	"github.com/math2001/boatsinker/server/utils"
 )
 
+// list of every players
 var players = make(map[*net.Conn]*Player)
+
+// the player who has to play. By default, it's nil
+var turn *net.Conn
 
 // the size of the board
 const width = 10
@@ -21,6 +26,17 @@ var boatsizes = map[int]int{
 	// 4: 1,
 	// 3: 2,
 	// 2: 1,
+}
+
+func playersReady() bool {
+	for _, p := range players {
+		// if p.Board is empty, this means we are waiting for the player to
+		// send his board set up
+		if reflect.DeepEqual((Board{}), p.Board) {
+			return false
+		}
+	}
+	return true
 }
 
 // Start listen to connection events. They're the own who are going to actually
@@ -59,6 +75,18 @@ func Start() {
 		if kind == "board setup" {
 			if err := handleBoardSetup(players, msg); err != nil {
 				log.Fatalf("Invalid 'board ready' message: %s", err)
+			}
+			if playersReady() {
+				// tell one to play and the other to wait
+				count := 0
+				for conn := range players {
+					if count == 0 {
+						em.Emit("connection.send", utils.NewMessage(conn, "kind", "hit"))
+					} else {
+						em.Emit("connection.send", utils.NewMessage(conn, "kind", "wait"))
+					}
+					count++
+				}
 			}
 			return nil
 		}

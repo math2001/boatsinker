@@ -26,8 +26,8 @@ func MakeMap(args ...interface{}) map[string]interface{} {
 	return m
 }
 
-// NewMessage creates a new message from
-// usage: NewMessage(conn, "kind", "something", "data": obj)
+// NewMessage creates a new message from a connection and list of arguments,
+// which are passed through MakeMap
 func NewMessage(conn *net.Conn, args ...interface{}) Message {
 	return Message{
 		From:  conn,
