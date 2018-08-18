@@ -10,10 +10,11 @@ import (
 
 var players []Player
 
-// the size of the board (10 by 10)
-const mapsize = 10
+// the size of the board
+const width = 10
+const height = 10
 
-var boat_sizes = map[int]int{
+var boatsizes = map[int]int{
 	// boat size: count
 	5: 1,
 	4: 1,

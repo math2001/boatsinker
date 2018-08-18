@@ -2,14 +2,15 @@ import em from './em.js'
 
 export default {
 
-  init() {
-    em.on('get.name', this.manageDOM.bind(this))
+  init(root) {
+    this.root = root
   },
 
-  manageDOM() {
+  setDOM() {
     const form = document.createElement('form')
     const input = document.createElement('input')
     const submit = document.createElement('input')
+
     input.type = 'text'
     input.placeholder = "Your pseudo"
 
@@ -21,10 +22,16 @@ export default {
 
     form.appendChild(input)
     form.appendChild(submit)
-    document.body.appendChild(form)
+    this.root.appendChild(form)
+
+    input.focus()
+
     form.addEventListener('submit', e => {
       e.preventDefault()
-      em.emit("got.name", input.value)
+      em.emit('connection.send', {
+        kind: 'request',
+        name: input.value
+      })
       form.parentElement.removeChild(form)
     })
   }

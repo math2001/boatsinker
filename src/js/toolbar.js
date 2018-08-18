@@ -1,24 +1,34 @@
 import em from './em.js'
 
 export default {
-  init() {
-    this.elements = {
-      toolbar: document.querySelector('#toolbar')
-    }
-    this.elements.sendsetup = this.elements.toolbar.querySelector('#sendsetup')
+  init(root, boatsizes) {
+    this.elements = { root }
+
+    this.elements.toolbar = document.createElement('article')
+    this.elements.toolbar.classList.add('toolbar')
+    this.elements.root.appendChild(this.elements.toolbar)
+
+    this.elements.sendsetup = document.createElement('button')
+    this.elements.sendsetup.type = 'button'
+    this.elements.sendsetup.textContent = 'Send set up'
+    this.elements.sendsetup.disabled = true
+    this.elements.toolbar.appendChild(this.elements.sendsetup)
 
     this.elements.sendsetup.addEventListener('click', e => {
-      em.emit('boat.sendsetup')
+      // the toolbar (this componenet) doesn't know where the boats have been
+      // placed (it could, but it's not its job). It's the board who listens
+      // for this even and then actually send the positions to the server
+      em.emit('boat.sendsetup', null)
     })
+
     this.boats = []
     this.currentBoat = null
-    em.on("got.setup", conf => {
-      for (const size in conf.boatsizes) {
-        for (let i = 0; i < conf.boatsizes[size]; i++) {
-          this.newBoat(size, 0)
-        }
+    for (const size in boatsizes) {
+      for (let i = 0; i < boatsizes[size]; i++) {
+        this.newBoat(size, 0)
       }
-    })
+    }
+
     em.on("boat.placed", this.boatplaced.bind(this))
   },
 

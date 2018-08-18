@@ -16,6 +16,8 @@ type firstmessage struct {
 	Name string
 }
 
+// check the number of players and responds accordingly to the message (which
+// *has* to be the first one)
 func handleFirstMessage(players []Player, msg utils.Message) ([]Player, error) {
 	if len(players) == 2 {
 		// we have enough players.
@@ -37,10 +39,11 @@ func handleFirstMessage(players []Player, msg utils.Message) ([]Player, error) {
 				err)
 		}
 	}
+	// now we have enough player, so we send a message to everyone
 	if len(players) == 2 {
 		if err := em.Emit("connection.broadcast",
 			utils.MakeMap("kind", "state change", "state", "setup",
-				"boat_sizes", boat_sizes, "size", mapsize)); err != nil {
+				"boatsizes", boatsizes, "width", width, "height", height)); err != nil {
 			fmt.Printf("Error while broadcasting 'setup' message:\n%s", err)
 		}
 	}

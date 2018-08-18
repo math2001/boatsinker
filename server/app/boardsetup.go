@@ -30,7 +30,7 @@ func validBoats(boats []Boat) error {
 			return fmt.Errorf("Invlaid boat rotation: should be 0 or 1, got %d", boat.Rot)
 		}
 		fmt.Println(boat, boat.Pos.X >= 10)
-		sizes[boat.Size] += 1
+		sizes[boat.Size]++
 		var pt Point
 		for i := 0; i < boat.Size; i++ {
 			if boat.Rot == 0 {
@@ -46,8 +46,8 @@ func validBoats(boats []Boat) error {
 			occupied = append(occupied, pt)
 		}
 	}
-	if !reflect.DeepEqual(sizes, boat_sizes) {
-		return fmt.Errorf("Invalid boat sizes: should have %v, got %v", sizes, boat_sizes)
+	if !reflect.DeepEqual(sizes, boatsizes) {
+		return fmt.Errorf("Invalid boat sizes: should have %v, got %v", sizes, boatsizes)
 	}
 	return nil
 }

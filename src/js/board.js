@@ -28,7 +28,6 @@ function collides(boat, boats) {
   return occupied_cells.some(c => {
     for (const t of targetcells) {
       if (c[0] === t[0] && c[1] === t[1]) {
-        console.log('collision')
         return true
       }
     }
@@ -44,11 +43,11 @@ export default class Board {
     // x: <int>, y: <int> }
     this.boats = []
     this.highlightedcellsindex = []
+
     if (this.opts.own) {
       em.on('boat.select', boat => this.boat = boat)
       em.on('boat.unselect', boat => this.boat = null)
       em.on('boat.sendsetup', () => {
-        console.log(this)
         em.emit('connection.send', {
           kind: 'setup',
           boats: this.boats

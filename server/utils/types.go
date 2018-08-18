@@ -23,3 +23,4 @@ type Error struct {
 func (e *Error) String() {
 	fmt.Printf("Error: %s\nData: %#v", e.Err, e.Data)
 }
+
