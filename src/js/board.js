@@ -47,6 +47,13 @@ export default class Board {
     if (this.opts.own) {
       em.on('boat.select', boat => this.boat = boat)
       em.on('boat.unselect', boat => this.boat = null)
+      em.on('boat.sendsetup', () => {
+        console.log(this)
+        em.emit('connection.send', {
+          kind: 'setup',
+          boats: this.boats
+        })
+      })
     }
 
     this.board = document.createElement('div')

@@ -2,7 +2,14 @@ import em from './em.js'
 
 export default {
   init() {
-    this.toolbar = document.querySelector('#toolbar')
+    this.elements = {
+      toolbar: document.querySelector('#toolbar')
+    }
+    this.elements.sendsetup = this.elements.toolbar.querySelector('#sendsetup')
+
+    this.elements.sendsetup.addEventListener('click', e => {
+      em.emit('boat.sendsetup')
+    })
     this.boats = []
     this.currentBoat = null
     em.on("got.setup", conf => {
@@ -22,7 +29,7 @@ export default {
     boat.textContent = size
     boat.setAttribute('data-rotation', rotation)
     boat.classList.add('boat')
-    this.toolbar.appendChild(boat)
+    this.elements.toolbar.appendChild(boat)
     boat.addEventListener('contextmenu', this.rotate.bind(this))
     boat.addEventListener('click', this.select.bind(this))
     this.boats.push(boat)
@@ -76,6 +83,9 @@ export default {
     }
     this.currentBoat.classList.add('placed')
     this.currentBoat = null
+    if (this.boats.every(boat => boat.classList.contains('placed'))) {
+      this.elements.sendsetup.disabled = false
+    }
   }
 }
 
