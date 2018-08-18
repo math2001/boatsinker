@@ -28,10 +28,7 @@ export default {
 
     form.addEventListener('submit', e => {
       e.preventDefault()
-      em.emit('connection.send', {
-        kind: 'request',
-        name: input.value
-      })
+      em.emit('got.name', input.value)
       form.parentElement.removeChild(form)
     })
   }

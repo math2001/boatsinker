@@ -15,7 +15,7 @@ export default {
     this.elements.toolbar.appendChild(this.elements.sendsetup)
 
     this.elements.sendsetup.addEventListener('click', e => {
-      // the toolbar (this componenet) doesn't know where the boats have been
+      // the toolbar (this component) doesn't know where the boats have been
       // placed (it could, but it's not its job). It's the board who listens
       // for this even and then actually send the positions to the server
       em.emit('boat.sendsetup', null)
@@ -96,6 +96,7 @@ export default {
     this.currentBoat = null
     if (this.boats.every(boat => boat.classList.contains('placed'))) {
       this.elements.sendsetup.disabled = false
+      em.emit('boat.allsetup')
     }
   }
 }
