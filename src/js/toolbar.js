@@ -19,6 +19,7 @@ export default {
       // placed (it could, but it's not its job). It's the board who listens
       // for this even and then actually send the positions to the server
       em.emit('boat.sendsetup', null)
+      e.target.parentElement.removeChild(e.target)
     })
 
     this.boats = []

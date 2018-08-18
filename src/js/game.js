@@ -14,7 +14,7 @@ export default {
     const boards = document.createElement('article')
     root.appendChild(boards)
     this.own = new Board(boards,   {width: opts.width, height: opts.height, own: true})
-    this.other = new Board(boards, {width: opts.width, height: opts.height, own: false})
+    // this.other = new Board(boards, {width: opts.width, height: opts.height, own: false})
   }
 
 }
