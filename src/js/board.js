@@ -1,8 +1,38 @@
 import em from './em.js'
 
-function isInsideBoard(x, y, boat, board) {
-  return (boat.rotation === 0 && x + boat.size <= board.width)
-    || (boat.rotation === 1 && y + boat.size <= board.height)
+function isInsideBoard(boat, board) {
+  return (boat.rotation === 0 && boat.x + boat.size <= board.width)
+    || (boat.rotation === 1 && boat.y + boat.size <= board.height)
+}
+
+function collides(boat, boats) {
+  // this functions is absolutely discusting. I need to improve it.
+  const occupied_cells = []
+  for (const b of boats) {
+    for (let i = 0; i < b.size; i++) {
+      if (b.rotation == 0) {
+        occupied_cells.push([b.x + i, b.y])
+      } else {
+        occupied_cells.push([b.x, b.y + i])
+      }
+    }
+  }
+  const targetcells = []
+  for (let i = 0; i < boat.size; i++) {
+    if (boat.rotation == 0) {
+      targetcells.push([boat.x + i, boat.y])
+    } else {
+      targetcells.push([boat.x, boat.y + i])
+    }
+  }
+  return occupied_cells.some(c => {
+    for (const t of targetcells) {
+      if (c[0] === t[0] && c[1] === t[1]) {
+        console.log('collision')
+        return true
+      }
+    }
+  })
 }
 
 export default class Board {
@@ -10,6 +40,9 @@ export default class Board {
   constructor(parent, opts={}) {
     this.opts = opts
     this.boat = null
+    // boats that have been placed. A boat is { size: <int>, rotation: <int>,
+    // x: <int>, y: <int> }
+    this.boats = []
     this.highlightedcellsindex = []
     if (this.opts.own) {
       em.on('boat.select', boat => this.boat = boat)
@@ -58,7 +91,7 @@ export default class Board {
   mouseenter(e) {
     if (this.boat) {
       const [x, y] = this.celltoxy(e.target)
-      if (!isInsideBoard(x, y, this.boat, this.opts)) {
+      if (!isInsideBoard(Object.assign({ x, y }, this.boat), this.opts)) {
         this.board.classList.add('error')
         return
       }
@@ -87,15 +120,20 @@ export default class Board {
     // If it is, trigger boat.placed with position and information of the boat
     if (!this.boat) return
     const [x, y] = this.celltoxy(e.target)
-    if (!isInsideBoard(x, y, this.boat, this.opts)) {
+    const boat = Object.assign({ x, y }, this.boat)
+    if (!isInsideBoard(boat, this.opts)) {
       return alert("The boat has to be inside the board.")
+    }
+    if (collides(boat, this.boats)) {
+      return alert("Colliding with a boat! Can't put it there.")
     }
     for (const coor of this.highlightedcellsindex) {
       const cell = this.cellfromxy(...coor)
       cell.classList.remove('active')
       cell.classList.add('boat')
     }
-    em.emit("boat.placed", Object.assign({ x, y }, this.boat))
+    em.emit("boat.placed", boat)
+    this.boats.push(boat)
     this.boat = null
     this.highlightedcellsindex = []
   }
